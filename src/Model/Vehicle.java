@@ -17,7 +17,7 @@ public class Vehicle {
     public Vehicle() {
     }
 
-    public Vehicle(int id, int company_id, String city, String type, int summer_price,int winter_price, boolean extra_driver, int extra_driver_price, boolean baby_seat, int baby_seat_price, boolean summer_available, boolean winter_available) {
+    public Vehicle(int id, int company_id, String city, String type, int summer_price, int winter_price, boolean extra_driver, int extra_driver_price, boolean baby_seat, int baby_seat_price, boolean summer_available, boolean winter_available) {
         this.id = id;
         this.company_id = company_id;
         this.city = city;
@@ -141,7 +141,8 @@ public class Vehicle {
                 ", extra_driver_price=" + extra_driver_price +
                 ", baby_seat=" + baby_seat +
                 ", baby_seat_price=" + baby_seat_price +
-                ", available=" + summer_available +
+                ", summer_available=" + summer_available +
+                ", winter_available=" + winter_available +
                 '}';
     }
 }

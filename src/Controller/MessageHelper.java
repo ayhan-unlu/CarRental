@@ -23,7 +23,7 @@ public class MessageHelper {
                 title = "Error";
                 break;
             default:
-                title = "Error";
+                title = "Information";
                 break;
         }
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);

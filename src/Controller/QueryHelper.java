@@ -20,7 +20,19 @@ public class QueryHelper {
         return "INSERT INTO companies (name, city) VALUES (?, ?)";
     }
 
-    public static String createAddVehicleQuery(){
+    public static String createAddVehicleQuery() {
         return "INSERT INTO vehicles (company_id, city, type, summer_price, winter_price, extra_driver, extra_driver_price, baby_seat, baby_seat_price, summer_available, winter_available) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+    }
+
+    public static String createGetVehicleListQuery() {
+        return "SELECT * FROM vehicles";
+    }
+
+    public static String createAddReservationQuery(){
+        return "INSERT INTO reservations (vehicle_id, company_id, city, type, user_id, username, pickup_date, dropoff_date, extra_driver, baby_seat, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    }
+
+    public static String createGetReservationListQuery(){
+        return "SELECT * FROM reservations";
     }
 }

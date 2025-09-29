@@ -16,7 +16,6 @@ public class StaffGUI extends JFrame {
     private JTabbedPane tabbed_panel_staff;
     private JPanel panel_staff_vehicle;
     private JButton button_staff_logout;
-    private JPanel panel_staff_add_vehicle;
     private JLabel label_staff_add_vehicle;
     private JLabel label_staff_add_vehicle_type;
     private JComboBox combobox_staff_add_vehicle_type;
@@ -37,6 +36,7 @@ public class StaffGUI extends JFrame {
     private JCheckBox checkbox_staff_add_vehicle_winter_available;
     private JLabel label_staff_add_vehicle_summer_available;
     private JLabel label_staff_add_vehicle_winter_available;
+    private JPanel panel_staff_add_vehicle;
     private DefaultTableModel model_vehicle_list;
     private Object[] row_vehicle_list;
 
@@ -83,24 +83,18 @@ public class StaffGUI extends JFrame {
             if (type.equals("") || (summer_price == 0 && winter_price == 0)) {
                 MessageHelper.showMessage("Type and at least one seasonal price fields should be filled");
 
-            }
-            {
-                if ((summer_available && summer_price == 0) || (winter_available && winter_price == 0)) {
-                    MessageHelper.showMessage("If available season is selected price has to be filled");
+            } else if ((summer_available && summer_price == 0) || (winter_available && winter_price == 0)) {
+                MessageHelper.showMessage("If available season is selected price has to be filled");
+            } else if ((!summer_available && summer_price != 0) || (!winter_available && winter_price != 0)) {
+                MessageHelper.showMessage("If season is not selected seasonal price should be set zero(0)");
+            } else if ((extra_driver && extra_driver_price == 0) || (baby_seat && baby_seat_price == 0)) {
+                MessageHelper.showMessage("If extra features are selected adding price is obligatory");
+            } else if ((!extra_driver && extra_driver_price != 0) || (!baby_seat && baby_seat_price != 0)) {
+                MessageHelper.showMessage("When extra features are not selected price should be set zero (0)");
+            } else {
+                if (VehicleController.addVehicle(user, type, summer_price, winter_price, extra_driver, extra_driver_price, baby_seat, baby_seat_price, summer_available, winter_available)) {
+                    MessageHelper.showMessage("Vehicle added successfully");
                 }
-                if((!summer_available&&summer_price!=0)||(!winter_available&&winter_price!=0)){
-                    MessageHelper.showMessage("If season is not selected seasonal price should be set zero(0)");
-                }
-
-                if ((extra_driver && extra_driver_price == 0) || (baby_seat && baby_seat_price == 0)) {
-                    MessageHelper.showMessage("If extra features are selected adding price is obligatory");
-                }
-                if ((!extra_driver && extra_driver_price != 0) || (!baby_seat && baby_seat_price != 0)) {
-                    MessageHelper.showMessage("When extra features are not selected price should be set zero (0)");
-                }
-            }
-            if (VehicleController.addVehicle(user, type, summer_price, winter_price, extra_driver, extra_driver_price, baby_seat, baby_seat_price,summer_available,winter_available)) {
-                MessageHelper.showMessage("Vehicle added successfully");
             }
             // emptyFields();
 

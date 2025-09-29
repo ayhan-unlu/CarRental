@@ -31,10 +31,10 @@ public class LoginGUI extends JFrame {
         setTitle(Config.PROJECT_TITLE);
         setResizable(false);
         setVisible(true);
-            /// FOR QUICK ACCESS TO customer MENU
+        /// FOR QUICK ACCESS TO customer MENU
         field_login_user_username.setText("c");
         field_login_user_password.setText("c");
-            /// FOR QUICK ACCESS TO customer MENU
+        /// FOR QUICK ACCESS TO customer MENU
         button_login_sign_up.addActionListener(e -> GUIController.runSignUpGUI());
         button_login_login.addActionListener(e -> {
 
@@ -44,21 +44,21 @@ public class LoginGUI extends JFrame {
             if (username.isEmpty() || password.isEmpty()) {
                 MessageHelper.showMessage("fill");
             } else {
-                User foundUser= UserController.login(username, password);
-                if ( foundUser!=null) {
+                User foundUser = UserController.login(username, password);
+                if (foundUser != null) {
                     ///  EXCLUDED TO A QUICK ACCESS TO STAFF MENU
                     //MessageHelper.showMessage("login");
                     ///  EXCLUDED TO A QUICK ACCESS TO STAFF MENU
-                    if(foundUser.getType().equals("staff")){
-                    GUIController.runStaffGUI(foundUser);
+                    if (foundUser.getType().equals("staff")) {
+                        GUIController.runStaffGUI(foundUser);
                     }
-                    if(foundUser.getType().equals("customer")){
+                    if (foundUser.getType().equals("customer")) {
                         GUIController.runCustomerGUI(foundUser);
                     }
                 }
 
             }
-            GUIHelper.emptyTextFields(field_login_user_username,field_login_user_password);
+            GUIHelper.emptyTextFields(field_login_user_username, field_login_user_password);
 
         });
     }
