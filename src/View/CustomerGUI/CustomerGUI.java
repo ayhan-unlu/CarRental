@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 public class CustomerGUI extends JFrame {
 
     private JPanel wrapper;
+    private JTabbedPane tabbedPane1;
     private JLabel label_customer_welcome;
     private JButton button_customer_logout;
 

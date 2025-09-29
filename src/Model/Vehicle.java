@@ -5,27 +5,31 @@ public class Vehicle {
     private int company_id;
     private String city;
     private String type;
-    private int price;
-    private boolean isExtra_driver;
+    private int summer_price;
+    private int winter_price;
+    private boolean extra_driver;
     private int extra_driver_price;
-    private boolean isBaby_seat;
+    private boolean baby_seat;
     private int baby_seat_price;
-    private boolean isavailabality;
+    private boolean summer_available;
+    private boolean winter_available;
 
     public Vehicle() {
     }
 
-    public Vehicle(int id, int company_id, String city, String type, int price, boolean isExtra_driver, int extra_driver_price, boolean isBaby_seat, int baby_seat_price, boolean isavailabality) {
+    public Vehicle(int id, int company_id, String city, String type, int summer_price,int winter_price, boolean extra_driver, int extra_driver_price, boolean baby_seat, int baby_seat_price, boolean summer_available, boolean winter_available) {
         this.id = id;
         this.company_id = company_id;
         this.city = city;
         this.type = type;
-        this.price = price;
-        this.isExtra_driver = isExtra_driver;
+        this.summer_price = summer_price;
+        this.winter_price = winter_price;
+        this.extra_driver = extra_driver;
         this.extra_driver_price = extra_driver_price;
-        this.isBaby_seat = isBaby_seat;
+        this.baby_seat = baby_seat;
         this.baby_seat_price = baby_seat_price;
-        this.isavailabality = isavailabality;
+        this.summer_available = summer_available;
+        this.winter_available = winter_available;
     }
 
     public int getId() {
@@ -60,20 +64,28 @@ public class Vehicle {
         this.type = type;
     }
 
-    public int getPrice() {
-        return price;
+    public int getSummer_price() {
+        return summer_price;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setSummer_price(int summer_price) {
+        this.summer_price = summer_price;
+    }
+
+    public int getWinter_price() {
+        return winter_price;
+    }
+
+    public void setWinter_price(int winter_price) {
+        this.winter_price = winter_price;
     }
 
     public boolean isExtra_driver() {
-        return isExtra_driver;
+        return extra_driver;
     }
 
     public void setExtra_driver(boolean extra_driver) {
-        isExtra_driver = extra_driver;
+        this.extra_driver = extra_driver;
     }
 
     public int getExtra_driver_price() {
@@ -85,11 +97,11 @@ public class Vehicle {
     }
 
     public boolean isBaby_seat() {
-        return isBaby_seat;
+        return baby_seat;
     }
 
     public void setBaby_seat(boolean baby_seat) {
-        isBaby_seat = baby_seat;
+        this.baby_seat = baby_seat;
     }
 
     public int getBaby_seat_price() {
@@ -100,11 +112,36 @@ public class Vehicle {
         this.baby_seat_price = baby_seat_price;
     }
 
-    public boolean isIsavailabality() {
-        return isavailabality;
+    public boolean isSummer_available() {
+        return summer_available;
     }
 
-    public void setIsavailabality(boolean isavailabality) {
-        this.isavailabality = isavailabality;
+    public void setSummer_available(boolean summer_available) {
+        this.summer_available = summer_available;
+    }
+
+    public boolean isWinter_available() {
+        return winter_available;
+    }
+
+    public void setWinter_available(boolean winter_available) {
+        this.winter_available = winter_available;
+    }
+
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "id=" + id +
+                ", company_id=" + company_id +
+                ", city='" + city + '\'' +
+                ", type='" + type + '\'' +
+                ", summer_price=" + summer_price +
+                ", winter_price=" + winter_price +
+                ", extra_driver=" + extra_driver +
+                ", extra_driver_price=" + extra_driver_price +
+                ", baby_seat=" + baby_seat +
+                ", baby_seat_price=" + baby_seat_price +
+                ", available=" + summer_available +
+                '}';
     }
 }

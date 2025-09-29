@@ -2,6 +2,7 @@ package Controller;
 
 import Model.Company;
 import Model.User;
+import Model.Vehicle;
 
 public class DBHelper {
 
@@ -20,6 +21,12 @@ public class DBHelper {
     public static void addCompanyWithDBHelper(String name, String city){
         SQLHelper.addCompanyWithSQLHelper(name,city);
     }
+
+    public static boolean addVehicleWithDBHelper(Vehicle vehicle){
+        return SQLHelper.addVehicleWithSQLHelper(vehicle);
+    }
+
+
 
 
 }

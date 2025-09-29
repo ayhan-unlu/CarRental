@@ -31,8 +31,14 @@ public class LoginGUI extends JFrame {
         setTitle(Config.PROJECT_TITLE);
         setResizable(false);
         setVisible(true);
+            /// FOR QUICK ACCESS TO customer MENU
+        field_login_user_username.setText("c");
+        field_login_user_password.setText("c");
+            /// FOR QUICK ACCESS TO customer MENU
         button_login_sign_up.addActionListener(e -> GUIController.runSignUpGUI());
         button_login_login.addActionListener(e -> {
+
+
             username = field_login_user_username.getText();
             password = new String(field_login_user_password.getPassword());
             if (username.isEmpty() || password.isEmpty()) {
@@ -40,7 +46,9 @@ public class LoginGUI extends JFrame {
             } else {
                 User foundUser= UserController.login(username, password);
                 if ( foundUser!=null) {
-                    MessageHelper.showMessage("login");
+                    ///  EXCLUDED TO A QUICK ACCESS TO STAFF MENU
+                    //MessageHelper.showMessage("login");
+                    ///  EXCLUDED TO A QUICK ACCESS TO STAFF MENU
                     if(foundUser.getType().equals("staff")){
                     GUIController.runStaffGUI(foundUser);
                     }
