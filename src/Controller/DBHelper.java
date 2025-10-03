@@ -30,7 +30,7 @@ public class DBHelper {
     }
 
     public static ArrayList<Vehicle> getVehicleListWithDBHelper() {
-        return  SQLHelper.getVehicleListWithSQLHelper();
+        return SQLHelper.getVehicleListWithSQLHelper();
     }
 
     public static Vehicle getFetchByVehicleId(int vehicle_id) {
@@ -46,17 +46,34 @@ public class DBHelper {
         return SQLHelper.addReservationWithSQLHelper(reservation);
     }
 
-    public static ArrayList<Reservation> getReservationListWithDBHelper(){
+    public static ArrayList<Reservation> getReservationListWithDBHelper() {
         return SQLHelper.getReservationListWithSQLHelper();
     }
-    public static Reservation getFetchReservationByVehicleId(int vehicle_id) {
-        for (Reservation obj : getReservationListWithDBHelper()) {
-            if(obj.getId()==vehicle_id){
-                return obj;
+
+    public static ArrayList<Reservation> getReservationListWithDBHelperByUser(User user) {
+        ArrayList<Reservation> reservationListByUser = new ArrayList<>();
+        for (Reservation reservation : getReservationListWithDBHelper()) {
+            if (reservation.getUser_id() == user.getId()) {
+                reservationListByUser.add(reservation);
             }
         }
+        return reservationListByUser;
+    }
 
-        return null;
+
+    public static ArrayList<Reservation> getFetchReservationByVehicleId(int vehicle_id) {
+        ArrayList<Reservation> reservationList = new ArrayList<>();
+        for (Reservation obj : getReservationListWithDBHelper()) {
+            if (obj.getVehicle_id() == vehicle_id) {
+                reservationList.add(obj);
+            }
+        }
+        return reservationList;
+    }
+
+    public static void deleteReservationByReservationId(int reservation_id) {
+        SQLHelper.deleteReservationByReservationId(reservation_id);
+
     }
 
 

@@ -244,6 +244,10 @@ public class SQLHelper {
         return sqlDate;
     }
 
+    public static LocalDate convertSQLDateToLocalDate(Date date) {
+        return date.toLocalDate();
+    }
+
     public static ArrayList<Reservation> getReservationListWithSQLHelper() {
         return getReservationListWithStatement(createStatement2GetReservationList());
     }
@@ -269,21 +273,53 @@ public class SQLHelper {
             while (resultSet.next()) {
                 obj = new Reservation();
                 obj.setId(resultSet.getInt("id"));
+                obj.setVehicle_id(resultSet.getInt("vehicle_id"));
                 obj.setCompany_id(resultSet.getInt("company_id"));
                 obj.setCity(resultSet.getString("city"));
                 obj.setType(resultSet.getString("type"));
-                /// //////////////////
-           /*     obj.setId(resultSet.getInt("id"));
-                obj.setId(resultSet.getInt("id"));
-                obj.setId(resultSet.getInt("id"));
-                obj.setId(resultSet.getInt("id"));
-                obj.setId(resultSet.getInt("id"));
-                obj.setId(resultSet.getInt("id"));
-                obj.setId(resultSet.getInt("id"));
-                obj.setId(resultSet.getInt("id"));*/
+                obj.setUser_id(resultSet.getInt("user_id"));
+                obj.setUsername(resultSet.getString("username"));
+                obj.setPickup_date(SQLHelper.convertSQLDateToLocalDate(resultSet.getDate("pickup_date")));
+                obj.setDropoff_date(SQLHelper.convertSQLDateToLocalDate(resultSet.getDate("dropoff_date")));
+                obj.setExtra_driver(resultSet.getBoolean("extra_driver"));
+                obj.setBaby_seat(resultSet.getBoolean("baby_seat"));
+                obj.setPrice(resultSet.getInt("price"));
+                reservationList.add(obj);
+
             }
         } catch (SQLException e) {
             System.out.println("SQL Get ReservationList with statement" + e.getMessage());
         }
+        return reservationList;
+    }
+
+    public static boolean deleteReservationByReservationId(int reservation_id) {
+        return deleteReservationByReservationIdWithPreparedStatement(preparePreparedStatement2DeleteReservationByReservationId(reservation_id));
+
+
+
+    }
+
+    public static PreparedStatement preparePreparedStatement2DeleteReservationByReservationId(int reservation_id) {
+        String query = QueryHelper.createDeleteReservationByReservationIdQuery();
+
+        try {
+            PreparedStatement preparedStatement = DBConnector.getInstance().prepareStatement(query);
+            preparedStatement.setInt(1, reservation_id);
+            return preparedStatement;
+        } catch (SQLException e) {
+            System.out.println("SQL Delete ReservationByReservationId" + e.getMessage());
+        }
+        return null;
+    }
+
+    public static boolean deleteReservationByReservationIdWithPreparedStatement(PreparedStatement preparedStatement){
+        try{
+            int response = preparedStatement.executeUpdate();
+            return response>0;
+        }catch(SQLException e){
+            System.out.println("SQL Delete ReservationByReservationId" + e.getMessage());
+        }
+        return false;
     }
 }

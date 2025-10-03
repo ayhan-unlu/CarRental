@@ -11,8 +11,9 @@ import java.util.ArrayList;
 public class VehicleController {
 
     public static boolean addVehicle(User user, String type, int summer_price, int winter_price, boolean extra_driver, int extra_driver_price, boolean baby_seat, int baby_seat_price, boolean summer_available, boolean winter_available) {
-        System.out.println("Adding Vehicle");
-        Vehicle vehicle = createVehicle(user, type, summer_price, summer_price, extra_driver, extra_driver_price, baby_seat, baby_seat_price, summer_available, winter_available);
+        if(!summer_available){summer_price=0;}
+        if(!winter_available){winter_price=0;}
+        Vehicle vehicle = createVehicle(user, type, summer_price, winter_price, extra_driver, extra_driver_price, baby_seat, baby_seat_price, summer_available, winter_available);
 
         return DBHelper.addVehicleWithDBHelper(vehicle);
     }
@@ -43,6 +44,24 @@ public class VehicleController {
 
     public static ArrayList<Vehicle> getVehicleList() {
         return DBHelper.getVehicleListWithDBHelper();
+    }
+
+    public static ArrayList<Vehicle> getVehicleListByCompany(User user){
+        ArrayList<Vehicle> vehicleListByCompany = new ArrayList<>();
+        int user_company_id=0;
+
+        if (user.getUsername().equals("a")){
+            user_company_id=1;
+        }
+        if(user.getUsername().equals("b")){
+            user_company_id=2;
+        }
+        for(Vehicle vehicle : getVehicleList()){
+            if(vehicle.getCompany_id()==user_company_id){
+                vehicleListByCompany.add(vehicle);
+            }
+        }
+        return vehicleListByCompany;
     }
 
     public static ArrayList<Vehicle> searchInVehicleList(String city, String type) {

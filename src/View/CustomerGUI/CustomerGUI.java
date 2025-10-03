@@ -1,6 +1,7 @@
 package View.CustomerGUI;
 
 import Controller.*;
+import Model.Reservation;
 import Model.User;
 import Model.Vehicle;
 
@@ -10,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -39,8 +39,19 @@ public class CustomerGUI extends JFrame {
     private JLabel label_customer_search_reservation_vehicle_id;
     private JTextField field_customer_search_reservation_vehicle_id;
     private JButton button_customer_search_reservation_reserve;
+    private JPanel panel_customer_reservation;
+    private JTable table_customer_reservations_search_list;
+    private JPanel panel_staff_reservation_delete;
+    private JLabel label_customer_reservation_delete_title;
+    private JLabel label_customer_reservation_delete_reservation_id;
+    private JButton button_customer_reservation_delete;
+    private JScrollPane scroll_pane_customer_reservation;
+    private JTextField field_customer_reservation_delete_reservation_id;
     private DefaultTableModel model_customer_search_list;
     private Object[] row_customer_search_list;
+    private DefaultTableModel model_customer_reservations_search_list;
+    private Object[] row_customer_reservation_search_list;
+
 
     private final User user;
     private boolean isSearchProper = false;
@@ -69,14 +80,11 @@ public class CustomerGUI extends JFrame {
             if (city.isEmpty() || type.isEmpty() || pickup_date.isEmpty() || dropoff_date.isEmpty()) {
                 MessageHelper.showMessage("fill");
             } else {
-                loadCustomerSearchListModel(VehicleController.searchInVehicleList(city, type));
+                loadCustomerVehicleSearchListModel(VehicleController.searchInVehicleList(city, type));
                 isSearchProper = true;
             }
-
-
-            System.out.println("Searching for customer " + user.getUsername());
         });
-
+/// -------------------------- MODEL CUSTOMER SEARCH VEHICLE LIST ------------------------------------------------------
         model_customer_search_list = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -89,12 +97,11 @@ public class CustomerGUI extends JFrame {
         model_customer_search_list.setColumnIdentifiers(column_customer_search_list);
         row_customer_search_list = new Object[column_customer_search_list.length];
         loadVehicleCityComboBox(combobox_customer_search_city);
-
         table_customer_search_list.setModel(model_customer_search_list);
         table_customer_search_list.getTableHeader().setReorderingAllowed(false);
-        loadCustomerSearchListModel(VehicleController.getVehicleList());
-        field_customer_search_pickup_date.setText("12.06.2025");
-        field_customer_search_dropoff_date.setText("13.06.2025");
+        loadCustomerVehicleSearchListModel(VehicleController.getVehicleList());
+//        field_customer_search_pickup_date.setText("12.06.2025");
+//        field_customer_search_dropoff_date.setText("13.06.2025");
 
         table_customer_search_list.addMouseListener(new MouseAdapter() {
             @Override
@@ -107,20 +114,75 @@ public class CustomerGUI extends JFrame {
                 }
             }
         });
+/// -----------------------### MODEL CUSTOMER SEARCH VEHICLE LIST ###---------------------------------------------------
+/// ----------------------- MODEL CUSTOMER RESERVATION LIST ###---------------------------------------------------
+        model_customer_reservations_search_list = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        Object[] column_customer_reservation_search_list = {"Reservation Id", "Vehicle Id", "Company Id", "City", "Type", "User Id", "Username", "Pick-up Date", "Drop-off Date", "Extra Driver", "Baby Seat", "Price"};
+
+        model_customer_reservations_search_list.setColumnIdentifiers(column_customer_reservation_search_list);
+        row_customer_reservation_search_list = new Object[column_customer_reservation_search_list.length];
+        table_customer_reservations_search_list.setModel(model_customer_reservations_search_list);
+        table_customer_reservations_search_list.getTableHeader().setReorderingAllowed(false);
+
+        loadCustomerReservationsSearchListModel(DBHelper.getReservationListWithDBHelperByUser(user));
+
+        table_customer_reservations_search_list.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int selectedRow = table_customer_reservations_search_list.rowAtPoint(e.getPoint());
+                table_customer_reservations_search_list.setRowSelectionInterval(selectedRow, selectedRow);
+                String selectedReservationId = table_customer_reservations_search_list.getValueAt(selectedRow, 0).toString();
+                field_customer_reservation_delete_reservation_id.setText(selectedReservationId);
+            }
+        });
+
+/// -----------------------### MODEL CUSTOMER RESERVATION LIST ###---------------------------------------------------
 
 
         button_customer_search_reservation_reserve.addActionListener(e -> {
             int selected_vehicle_id = 0;
-            selected_vehicle_id = (Integer) Integer.parseInt(field_customer_search_reservation_vehicle_id.getText().toString());
+            selected_vehicle_id = Integer.parseInt(field_customer_search_reservation_vehicle_id.getText());
             String string_pickup_date = field_customer_search_pickup_date.getText();
             String string_dropoff_date = field_customer_search_dropoff_date.getText();
             LocalDate localDate_pickup_date = ReservationHelper.convertStringToLocalDate(string_pickup_date);
             LocalDate localDate_dropoff_date = ReservationHelper.convertStringToLocalDate(string_dropoff_date);
-            if (isSearchProper && selected_vehicle_id != 0) {
-                ReservationHelper.reserveVehicle(user, selected_vehicle_id, localDate_pickup_date, localDate_dropoff_date);
-                MessageHelper.showMessage("Reserved");
-            }
 
+            if (isSearchProper && selected_vehicle_id != 0 && localDate_pickup_date.isBefore(localDate_dropoff_date)) {
+                if (ReservationHelper.reserveVehicle(user, selected_vehicle_id, localDate_pickup_date, localDate_dropoff_date)
+                ) {
+                    MessageHelper.showMessage("Reserved");
+                } else {
+                    MessageHelper.showMessage("The vehicle is not available on the selected dates");
+                }
+            }
+            loadCustomerReservationsSearchListModel(DBHelper.getReservationListWithDBHelperByUser(user));
+
+
+        });
+        button_customer_reservation_delete.addActionListener(e -> {
+            int selected_reservation_id = 0;
+            selected_reservation_id = Integer.parseInt(field_customer_reservation_delete_reservation_id.getText());
+            if (selected_reservation_id != 0) {
+                if (!ReservationHelper.controlCurrentDateForDeletingReservation(selected_reservation_id)) {
+                    MessageHelper.showMessage("You cant delete the reservation when only one or less day left");
+                    return;
+                }
+            }
+            if (selected_reservation_id == 0) {
+                MessageHelper.showMessage("Please select a reservation from table to delete ");
+                return;
+            } else {
+                if (ReservationHelper.deleteReservationByReservationId(selected_reservation_id)
+                ) {
+                    MessageHelper.showMessage("Reservation has been deleted");
+                    loadCustomerReservationsSearchListModel(DBHelper.getReservationListWithDBHelperByUser(user));
+                }
+            }
         });
     }
 
@@ -135,14 +197,11 @@ public class CustomerGUI extends JFrame {
                 cityList.add(currentCity);
                 combobox.addItem(new Item(i++, currentCity));
             }
-
-
-            System.out.println(obj.getCity());
         }
 
     }
 
-    public void loadCustomerSearchListModel(ArrayList<Vehicle> vehicleList) {
+    public void loadCustomerVehicleSearchListModel(ArrayList<Vehicle> vehicleList) {
         DefaultTableModel clearModel = (DefaultTableModel) table_customer_search_list.getModel();
         clearModel.setRowCount(0);
         int i;
@@ -161,6 +220,30 @@ public class CustomerGUI extends JFrame {
             row_customer_search_list[i++] = obj.isBaby_seat();
             row_customer_search_list[i++] = obj.getBaby_seat_price();
             model_customer_search_list.addRow(row_customer_search_list);
+        }
+    }
+
+    public void loadCustomerReservationsSearchListModel(ArrayList<Reservation> reservationList) {
+        DefaultTableModel clearModel = (DefaultTableModel) table_customer_reservations_search_list.getModel();
+        clearModel.setRowCount(0);
+
+        int i;
+
+        for (Reservation obj : reservationList) {
+            i = 0;
+            row_customer_reservation_search_list[i++] = obj.getId();
+            row_customer_reservation_search_list[i++] = obj.getVehicle_id();
+            row_customer_reservation_search_list[i++] = obj.getCompany_id();
+            row_customer_reservation_search_list[i++] = obj.getCity();
+            row_customer_reservation_search_list[i++] = obj.getType();
+            row_customer_reservation_search_list[i++] = obj.getUser_id();
+            row_customer_reservation_search_list[i++] = obj.getUsername();
+            row_customer_reservation_search_list[i++] = obj.getPickup_date();
+            row_customer_reservation_search_list[i++] = obj.getDropoff_date();
+            row_customer_reservation_search_list[i++] = obj.isExtra_driver();
+            row_customer_reservation_search_list[i++] = obj.isBaby_seat();
+            row_customer_reservation_search_list[i++] = obj.getPrice();
+            model_customer_reservations_search_list.addRow(row_customer_reservation_search_list);
         }
     }
 }

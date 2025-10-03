@@ -35,4 +35,8 @@ public class QueryHelper {
     public static String createGetReservationListQuery(){
         return "SELECT * FROM reservations";
     }
+
+    public static String createDeleteReservationByReservationIdQuery(){
+        return "DELETE FROM reservations WHERE id=? ";
+    }
 }
