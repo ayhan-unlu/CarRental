@@ -35,30 +35,52 @@
  (Main Menu → Login/Sign-Up → Customer/Staff Menu)
 
 - MVC-based architecture for organized code
+## Project Structure
+
+![Structure.png](src/View/Images/Structure.png)
+_250926_CarRental
+
+    Controller
+        CompanyController.java
+        ReservationController.java
+        UserController.java
+        VehicleController.java
+        GUIController.java
+
+    Helper
+        Config.java
+        DBConnector.java
+        DBHelper.java
+        GUIHelper.java
+        MessageHelper.java
+        SQLHelper.java
+
+    Model
+        Company.java
+        Reservation.java
+        User.java
+        Vehicle.java
+
+    View
+        CustomerGUI/CustomerGUI.java
+        LoginGUI/LoginGUI.java
+        SignUpGUI/SignUpGUI.java
+        StaffGUI/StaffGUI.java│
+
+    Main.java
+
+
 
 ## Class Diagram
->>![ClassDiagram.png](View/ClassDiagram.png)
-
+![ClassDiagram.png](src/View/Images/ClassDiagram.png)
 ## UML s
 
 ### Class UML
-![Class UML.png](View/Class%20UML.png)
-
+![Class UML.png](src/View/Images/Class%20UML.png)
 ### Controller UML
-![ControllerUml.png](View/ControllerUml.png)
-
+![ControllerUml.png](src/View/Images/ControllerUml.png)
 ### Helper UML
-![HelperUML.png](View/HelperUML.png)
-
-
-### Menu UML
-### Controller Helper UML
-
->>![ControllerHelperUml.png](ControllerHelperUml.png)
-
-
-
-
+![HelperUML.png](src/View/Images/HelperUML.png)
 
 ## Menus
 
@@ -132,40 +154,6 @@ Test Accounts
 File Storage
 
 - All user data is stored in MySQL database and automatically updated after every transaction.
-
-## Project Structure
-
-_250926_CarRental
-
-    Controller
-        CompanyController.java
-        ReservationController.java
-        UserController.java
-        VehicleController.java
-        GUIController.java
-
-    Helper
-        Config.java
-        DBConnector.java
-        DBHelper.java
-        GUIHelper.java
-        MessageHelper.java
-        SQLHelper.java
-
-    Model
-        Company.java
-        Reservation.java
-        User.java
-        Vehicle.java
-
-    View
-        CustomerGUI/CustomerGUI.java
-        LoginGUI/LoginGUI.java
-        SignUpGUI/SignUpGUI.java
-        StaffGUI/StaffGUI.java│
-
-    Main.java
-
 
 
 ## Future Improvements
