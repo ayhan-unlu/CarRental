@@ -1,10 +1,10 @@
-package Controller;
+package Helper;
 
-public class Item {
+public class ItemHelper {
     private int key;
     private String value;
 
-    public Item(int key, String value) {
+    public ItemHelper(int key, String value) {
         this.key = key;
         this.value = value;
     }

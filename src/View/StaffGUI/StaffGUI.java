@@ -1,15 +1,18 @@
 package View.StaffGUI;
 
 
-import Controller.Config;
-import Controller.GUIHelper;
-import Controller.MessageHelper;
-import Controller.VehicleController;
+import Controller.*;
+import Helper.Config;
+import Helper.GUIHelper;
+import Helper.MessageHelper;
+import Model.Reservation;
 import Model.User;
 import Model.Vehicle;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class StaffGUI extends JFrame {
@@ -40,15 +43,17 @@ public class StaffGUI extends JFrame {
     private JLabel label_staff_add_vehicle_winter_available;
     private JPanel panel_staff_add_vehicle;
     private JPanel panel_staff_reservation;
-    private JTable table_staff_reservations_list;
+    private JTable table_staff_reservation_list;
     private JPanel panel_staff_reservation_delete;
     private JLabel label_statt_reservation_delete_title;
     private JLabel label_staff_reservation_delete_reservation_id;
     private JButton button_staff_reservation_delete;
     private JTable table_staff_vehicle_list;
     private JTextField field_staff_reservation_delete_reservation_id;
-    private DefaultTableModel model_vehicle_list;
-    private Object[] row_vehicle_list;
+    private DefaultTableModel model_staff_vehicle_list;
+    private Object[] row_staff_vehicle_list;
+    private DefaultTableModel model_staff_reservation_list;
+    private Object[] row_staff_reservation_list;
 
     public final User user;
     public static String type;
@@ -79,31 +84,55 @@ public class StaffGUI extends JFrame {
         emptyFields();
 
 /// -------------------------- MODEL STAFF SEARCH VEHICLE LIST ------------------------------------------------------
-        model_vehicle_list = new DefaultTableModel() {
+        model_staff_vehicle_list = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
 
-        Object[] column_vehicle_list = {"Vehicle Id", "Company Id", "City", "Type", "Summer Available",  "Summer Price", "Winter Available", "Winter Price", "Extra Driver", "Extra Driver Price", "Baby Seat", "Baby Seat Price"};
+        Object[] column_vehicle_list = {"Vehicle Id", "Company Id", "City", "Type", "Summer Available", "Summer Price", "Winter Available", "Winter Price", "Extra Driver", "Extra Driver Price", "Baby Seat", "Baby Seat Price"};
 
-        model_vehicle_list.setColumnIdentifiers(column_vehicle_list);
+        model_staff_vehicle_list.setColumnIdentifiers(column_vehicle_list);
 
-        row_vehicle_list = new Object[column_vehicle_list.length];
+        row_staff_vehicle_list = new Object[column_vehicle_list.length];
 
-        table_staff_vehicle_list.setModel(model_vehicle_list);
+        table_staff_vehicle_list.setModel(model_staff_vehicle_list);
         table_staff_vehicle_list.getTableHeader().setReorderingAllowed(false);
         loadStaffVehicleListModel(VehicleController.getVehicleListByCompany(user));
 
 
-
-
 /// -----------------------### MODEL CUSTOMER SEARCH VEHICLE LIST ###---------------------------------------------------
 
+/// ----------------------- MODEL STAFF RESERVATION LIST ###---------------------------------------------------
+        model_staff_reservation_list = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-/// ----------------------- MODEL CUSTOMER RESERVATION LIST ###---------------------------------------------------
-/// -----------------------### MODEL CUSTOMER RESERVATION LIST ###---------------------------------------------------
+        Object[] column_staff_reservation_list = {"Reservation Id", "Vehicle Id", "Company Id", "City", "Type", "User Id", "Username", "Pick-up Date", "Drop-off Date", "Extra Driver", "Baby Seat", "Price"};
+        model_staff_reservation_list.setColumnIdentifiers(column_staff_reservation_list);
+
+        row_staff_reservation_list = new Object[column_staff_reservation_list.length];
+
+        table_staff_reservation_list.setModel(model_staff_reservation_list);
+        table_staff_reservation_list.getTableHeader().setReorderingAllowed(false);
+
+        loadStaffReservationListModel(ReservationController.getReservationListByCompany(user));
+
+
+        table_staff_reservation_list.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int selectedRow = table_staff_reservation_list.rowAtPoint(e.getPoint());
+                table_staff_reservation_list.setRowSelectionInterval(selectedRow, selectedRow);
+                String selectedReservationId = table_staff_reservation_list.getValueAt(selectedRow, 0).toString();
+                field_staff_reservation_delete_reservation_id.setText(selectedReservationId);
+            }
+        });
+/// -----------------------### MODEL STAFF RESERVATION LIST ###---------------------------------------------------
 
 
         button_staff_logout.addActionListener(e -> dispose());
@@ -141,35 +170,79 @@ public class StaffGUI extends JFrame {
                     MessageHelper.showMessage("Vehicle added successfully");
                 }
             }
+
+
             emptyFields();
 
 
         });
 
+        button_staff_reservation_delete.addActionListener(e -> {
+            int selected_reservation_id = 0;
+            selected_reservation_id = Integer.parseInt(field_staff_reservation_delete_reservation_id.getText());
+            if (selected_reservation_id != 0) {
+                if (!ReservationController.controlCurrentDateForDeletingReservation(selected_reservation_id)) {
+                    MessageHelper.showMessage("You cant delete the reservation when only one or less day left");
+                    return;
+                }
+            }
+            if (selected_reservation_id == 0) {
+                MessageHelper.showMessage("Please first choose a reservation from table to delete");
+                return;
+            } else {
+                if (ReservationController.deleteReservationByReservationId(selected_reservation_id)) {
+                    MessageHelper.showMessage("Reservation is deleted successfully");
+                    loadStaffReservationListModel(ReservationController.getReservationListByCompany(user));
+                }
+            }
+        });
     }
 
-    public void loadStaffVehicleListModel(ArrayList<Vehicle> vehicleList){
-        DefaultTableModel clearModel = (DefaultTableModel)table_staff_vehicle_list.getModel();
+    public void loadStaffVehicleListModel(ArrayList<Vehicle> vehicleList) {
+        DefaultTableModel clearModel = (DefaultTableModel) table_staff_vehicle_list.getModel();
         clearModel.setRowCount(0);
 
         int i;
 
-        for(Vehicle vehicle : vehicleList){
-            i=0;
+        for (Vehicle vehicle : vehicleList) {
+            i = 0;
 
-            row_vehicle_list[i++] = vehicle.getId();
-            row_vehicle_list [i++] = vehicle.getCompany_id();
-            row_vehicle_list [i++] = vehicle.getCity();
-            row_vehicle_list [i++] = vehicle.getType();
-            row_vehicle_list [i++] = vehicle.isSummer_available();
-            row_vehicle_list [i++] = vehicle.getSummer_price();
-            row_vehicle_list [i++] = vehicle.isWinter_available();
-            row_vehicle_list [i++] = vehicle.getWinter_price();
-            row_vehicle_list [i++] = vehicle.isExtra_driver();
-            row_vehicle_list [i++] = vehicle.getExtra_driver_price();
-            row_vehicle_list [i++] = vehicle.isBaby_seat();
-            row_vehicle_list [i++] = vehicle.getBaby_seat_price();
-            model_vehicle_list.addRow(row_vehicle_list);
+            row_staff_vehicle_list[i++] = vehicle.getId();
+            row_staff_vehicle_list[i++] = vehicle.getCompany_id();
+            row_staff_vehicle_list[i++] = vehicle.getCity();
+            row_staff_vehicle_list[i++] = vehicle.getType();
+            row_staff_vehicle_list[i++] = vehicle.isSummer_available();
+            row_staff_vehicle_list[i++] = vehicle.getSummer_price();
+            row_staff_vehicle_list[i++] = vehicle.isWinter_available();
+            row_staff_vehicle_list[i++] = vehicle.getWinter_price();
+            row_staff_vehicle_list[i++] = vehicle.isExtra_driver();
+            row_staff_vehicle_list[i++] = vehicle.getExtra_driver_price();
+            row_staff_vehicle_list[i++] = vehicle.isBaby_seat();
+            row_staff_vehicle_list[i++] = vehicle.getBaby_seat_price();
+            model_staff_vehicle_list.addRow(row_staff_vehicle_list);
+        }
+    }
+
+    public void loadStaffReservationListModel(ArrayList<Reservation> reservationList) {
+        DefaultTableModel clearModel = (DefaultTableModel) table_staff_reservation_list.getModel();
+        clearModel.setRowCount(0);
+
+        int i;
+        for (Reservation reservation : ReservationController.getReservationListByCompany(user)) {
+            i = 0;
+            row_staff_reservation_list[i++] = reservation.getId();
+            row_staff_reservation_list[i++] = reservation.getVehicle_id();
+            row_staff_reservation_list[i++] = reservation.getCompany_id();
+            row_staff_reservation_list[i++] = reservation.getCity();
+            row_staff_reservation_list[i++] = reservation.getType();
+            row_staff_reservation_list[i++] = reservation.getUser_id();
+            row_staff_reservation_list[i++] = reservation.getUsername();
+            row_staff_reservation_list[i++] = reservation.getPickup_date();
+            row_staff_reservation_list[i++] = reservation.getDropoff_date();
+            row_staff_reservation_list[i++] = reservation.isExtra_driver();
+            row_staff_reservation_list[i++] = reservation.isBaby_seat();
+            row_staff_reservation_list[i++] = reservation.getPrice();
+            model_staff_reservation_list.addRow(row_staff_reservation_list);
         }
     }
 

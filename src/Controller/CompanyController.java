@@ -1,5 +1,7 @@
 package Controller;
 
+import Helper.DBHelper;
+
 public class CompanyController {
 
     public static void addDefaultCompanies() {

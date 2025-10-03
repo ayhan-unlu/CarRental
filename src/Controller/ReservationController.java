@@ -1,16 +1,16 @@
 package Controller;
 
+import Helper.DBHelper;
 import Model.Reservation;
 import Model.User;
 import Model.Vehicle;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
-public class ReservationHelper {
+public class ReservationController {
     public static LocalDate convertStringToLocalDate(String string_date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         return LocalDate.parse(string_date, formatter);
@@ -94,15 +94,15 @@ public class ReservationHelper {
 
         Reservation reservation = getFetchReservationByReservationId(reservation_id);
         if (reservation != null) {
-            long dayBetween = ChronoUnit.DAYS.between(LocalDate.now(),reservation.getPickup_date());
-            return dayBetween>1;
+            long dayBetween = ChronoUnit.DAYS.between(LocalDate.now(), reservation.getPickup_date());
+            return dayBetween > 1;
         }
         return false;
     }
 
     public static Reservation getFetchReservationByReservationId(int reservation_id) {
 
-        for (Reservation obj : DBHelper.getReservationListWithDBHelper()) {
+        for (Reservation obj : getReservationList()) {
             if (obj.getId() == reservation_id) {
                 return obj;
             }
@@ -117,5 +117,21 @@ public class ReservationHelper {
         return true;
     }
 
+    public static ArrayList<Reservation> getReservationList() {
+        return DBHelper.getReservationListWithDBHelper();
+    }
 
+    public static ArrayList<Reservation> getReservationListByCompany(User user) {
+        ArrayList<Reservation> reservationListByCompany = new ArrayList<>();
+        int company_id = UserController.getUserCompanyId(user);
+        for (Reservation reservation : getReservationList()) {
+            if (reservation.getCompany_id() == company_id) {
+                reservationListByCompany.add(reservation);
+            }
+        }
+        return reservationListByCompany;
+    }
 }
+
+
+

@@ -1,14 +1,16 @@
 package View.CustomerGUI;
 
 import Controller.*;
+import Helper.Config;
+import Helper.DBHelper;
+import Helper.ItemHelper;
+import Helper.MessageHelper;
 import Model.Reservation;
 import Model.User;
 import Model.Vehicle;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
@@ -33,7 +35,7 @@ public class CustomerGUI extends JFrame {
     private JTextField field_customer_search_dropoff_date;
     private JLabel label_customer_search_dropoff_date;
     private JButton button_customer_search;
-    private JTable table_customer_search_list;
+    private JTable table_customer_vehicle_search_list;
     private JPanel panel_customer_search_reservation;
     private JLabel label_customer_search_reservation;
     private JLabel label_customer_search_reservation_vehicle_id;
@@ -47,7 +49,7 @@ public class CustomerGUI extends JFrame {
     private JButton button_customer_reservation_delete;
     private JScrollPane scroll_pane_customer_reservation;
     private JTextField field_customer_reservation_delete_reservation_id;
-    private DefaultTableModel model_customer_search_list;
+    private DefaultTableModel model_customer_vehicle_search_list;
     private Object[] row_customer_search_list;
     private DefaultTableModel model_customer_reservations_search_list;
     private Object[] row_customer_reservation_search_list;
@@ -85,7 +87,7 @@ public class CustomerGUI extends JFrame {
             }
         });
 /// -------------------------- MODEL CUSTOMER SEARCH VEHICLE LIST ------------------------------------------------------
-        model_customer_search_list = new DefaultTableModel() {
+        model_customer_vehicle_search_list = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -94,22 +96,22 @@ public class CustomerGUI extends JFrame {
 
         Object[] column_customer_search_list = {"Vehicle Id", "Company Id", "City", "Type", "Summer Available", "Summer Price", "Winter Available", "Winter Price", "Extra Driver", "Extra Driver Price", "Baby Seat", "Baby Seat Price"};
 
-        model_customer_search_list.setColumnIdentifiers(column_customer_search_list);
+        model_customer_vehicle_search_list.setColumnIdentifiers(column_customer_search_list);
         row_customer_search_list = new Object[column_customer_search_list.length];
         loadVehicleCityComboBox(combobox_customer_search_city);
-        table_customer_search_list.setModel(model_customer_search_list);
-        table_customer_search_list.getTableHeader().setReorderingAllowed(false);
+        table_customer_vehicle_search_list.setModel(model_customer_vehicle_search_list);
+        table_customer_vehicle_search_list.getTableHeader().setReorderingAllowed(false);
         loadCustomerVehicleSearchListModel(VehicleController.getVehicleList());
 //        field_customer_search_pickup_date.setText("12.06.2025");
 //        field_customer_search_dropoff_date.setText("13.06.2025");
 
-        table_customer_search_list.addMouseListener(new MouseAdapter() {
+        table_customer_vehicle_search_list.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (isSearchProper) {
-                    int selectedRow = table_customer_search_list.rowAtPoint(e.getPoint());
-                    table_customer_search_list.setRowSelectionInterval(selectedRow, selectedRow);
-                    String selectedVehicleId = table_customer_search_list.getValueAt(selectedRow, 0).toString();
+                    int selectedRow = table_customer_vehicle_search_list.rowAtPoint(e.getPoint());
+                    table_customer_vehicle_search_list.setRowSelectionInterval(selectedRow, selectedRow);
+                    String selectedVehicleId = table_customer_vehicle_search_list.getValueAt(selectedRow, 0).toString();
                     field_customer_search_reservation_vehicle_id.setText(selectedVehicleId);
                 }
             }
@@ -149,11 +151,11 @@ public class CustomerGUI extends JFrame {
             selected_vehicle_id = Integer.parseInt(field_customer_search_reservation_vehicle_id.getText());
             String string_pickup_date = field_customer_search_pickup_date.getText();
             String string_dropoff_date = field_customer_search_dropoff_date.getText();
-            LocalDate localDate_pickup_date = ReservationHelper.convertStringToLocalDate(string_pickup_date);
-            LocalDate localDate_dropoff_date = ReservationHelper.convertStringToLocalDate(string_dropoff_date);
+            LocalDate localDate_pickup_date = ReservationController.convertStringToLocalDate(string_pickup_date);
+            LocalDate localDate_dropoff_date = ReservationController.convertStringToLocalDate(string_dropoff_date);
 
             if (isSearchProper && selected_vehicle_id != 0 && localDate_pickup_date.isBefore(localDate_dropoff_date)) {
-                if (ReservationHelper.reserveVehicle(user, selected_vehicle_id, localDate_pickup_date, localDate_dropoff_date)
+                if (ReservationController.reserveVehicle(user, selected_vehicle_id, localDate_pickup_date, localDate_dropoff_date)
                 ) {
                     MessageHelper.showMessage("Reserved");
                 } else {
@@ -168,7 +170,7 @@ public class CustomerGUI extends JFrame {
             int selected_reservation_id = 0;
             selected_reservation_id = Integer.parseInt(field_customer_reservation_delete_reservation_id.getText());
             if (selected_reservation_id != 0) {
-                if (!ReservationHelper.controlCurrentDateForDeletingReservation(selected_reservation_id)) {
+                if (!ReservationController.controlCurrentDateForDeletingReservation(selected_reservation_id)) {
                     MessageHelper.showMessage("You cant delete the reservation when only one or less day left");
                     return;
                 }
@@ -177,7 +179,7 @@ public class CustomerGUI extends JFrame {
                 MessageHelper.showMessage("Please select a reservation from table to delete ");
                 return;
             } else {
-                if (ReservationHelper.deleteReservationByReservationId(selected_reservation_id)
+                if (ReservationController.deleteReservationByReservationId(selected_reservation_id)
                 ) {
                     MessageHelper.showMessage("Reservation has been deleted");
                     loadCustomerReservationsSearchListModel(DBHelper.getReservationListWithDBHelperByUser(user));
@@ -188,21 +190,21 @@ public class CustomerGUI extends JFrame {
 
     public void loadVehicleCityComboBox(JComboBox combobox) {
         combobox.removeAllItems();
-        combobox.addItem(new Item(0, ""));
+        combobox.addItem(new ItemHelper(0, ""));
         ArrayList<String> cityList = new ArrayList<>();
         int i = 1;
         for (Vehicle obj : DBHelper.getVehicleListWithDBHelper()) {
             String currentCity = obj.getCity();
             if (!cityList.contains(currentCity)) {
                 cityList.add(currentCity);
-                combobox.addItem(new Item(i++, currentCity));
+                combobox.addItem(new ItemHelper(i++, currentCity));
             }
         }
 
     }
 
     public void loadCustomerVehicleSearchListModel(ArrayList<Vehicle> vehicleList) {
-        DefaultTableModel clearModel = (DefaultTableModel) table_customer_search_list.getModel();
+        DefaultTableModel clearModel = (DefaultTableModel) table_customer_vehicle_search_list.getModel();
         clearModel.setRowCount(0);
         int i;
         for (Vehicle obj : vehicleList) {
@@ -219,7 +221,7 @@ public class CustomerGUI extends JFrame {
             row_customer_search_list[i++] = obj.getExtra_driver_price();
             row_customer_search_list[i++] = obj.isBaby_seat();
             row_customer_search_list[i++] = obj.getBaby_seat_price();
-            model_customer_search_list.addRow(row_customer_search_list);
+            model_customer_vehicle_search_list.addRow(row_customer_search_list);
         }
     }
 

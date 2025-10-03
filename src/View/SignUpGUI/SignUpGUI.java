@@ -1,8 +1,8 @@
 package View.SignUpGUI;
 
-import Controller.Config;
-import Controller.GUIHelper;
-import Controller.MessageHelper;
+import Helper.Config;
+import Helper.GUIHelper;
+import Helper.MessageHelper;
 import Controller.UserController;
 
 import javax.swing.*;

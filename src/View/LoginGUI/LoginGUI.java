@@ -1,6 +1,10 @@
 package View.LoginGUI;
 
 import Controller.*;
+import Helper.Config;
+import Controller.GUIController;
+import Helper.GUIHelper;
+import Helper.MessageHelper;
 import Model.User;
 
 import javax.swing.*;

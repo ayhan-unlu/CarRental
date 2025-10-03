@@ -1,5 +1,8 @@
 package Controller;
 
+import Helper.DBConnector;
+import Helper.DBHelper;
+import Helper.MessageHelper;
 import Model.User;
 
 import java.sql.PreparedStatement;
@@ -72,6 +75,13 @@ public class UserController {
 
     public static boolean isUserInDB(String username) {
         return DBHelper.getFetchByUsername(username) != null;
+    }
+
+    public static int getUserCompanyId(User user){
+        String username = user.getUsername();
+        if (username.equals("a"))return 1;
+        else if (username.equals("b"))return 2;
+        else return -1;
     }
 
 }

@@ -1,5 +1,5 @@
 import Controller.GUIController;
-import Controller.GUIHelper;
+import Helper.GUIHelper;
 
 public class Main {
     public static void main(String[] args) {

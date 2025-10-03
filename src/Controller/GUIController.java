@@ -1,5 +1,6 @@
 package Controller;
 
+import Helper.GUIHelper;
 import Model.User;
 import View.CustomerGUI.CustomerGUI;
 import View.LoginGUI.LoginGUI;
@@ -25,8 +26,8 @@ public class GUIController {
     }
 
     public static void runCustomerGUI(User user) {
-        CustomerGUI customerGUI = new CustomerGUI(user);
         setLayout();
+        CustomerGUI customerGUI = new CustomerGUI(user);
     }
 
     public static void setLayout(){

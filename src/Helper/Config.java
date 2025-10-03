@@ -1,4 +1,4 @@
-package Controller;
+package Helper;
 
 public class Config {
 

@@ -1,6 +1,4 @@
-package Controller;
-
-import Model.User;
+package Helper;
 
 import javax.swing.*;
 

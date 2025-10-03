@@ -1,4 +1,4 @@
-package Controller;
+package Helper;
 
 import Model.Company;
 import Model.Reservation;

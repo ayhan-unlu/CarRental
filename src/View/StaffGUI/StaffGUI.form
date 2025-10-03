@@ -248,7 +248,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="98160" class="javax.swing.JTable" binding="table_staff_reservations_list">
+                  <component id="98160" class="javax.swing.JTable" binding="table_staff_reservation_list">
                     <constraints/>
                     <properties/>
                   </component>
@@ -288,7 +288,7 @@
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="Button"/>
+                      <text value="Delete"/>
                     </properties>
                   </component>
                   <component id="9f1c3" class="javax.swing.JTextField" binding="field_staff_reservation_delete_reservation_id">
@@ -297,7 +297,9 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <enabled value="false"/>
+                    </properties>
                   </component>
                 </children>
               </grid>
